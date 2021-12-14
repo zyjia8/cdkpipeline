@@ -27,6 +27,7 @@ class CdkPipelineStack(core.Stack):
                 source_artifact=source_artifact,
                 cloud_assembly_artifact=cloud_assembly_artifact,
                 install_command='npm install -g aws-cdk && pip install -r requirements.txt',
+                build_command='pytest tests/unit'
                 synth_command='cdk synth'
             )
         )
@@ -36,7 +37,7 @@ class CdkPipelineStack(core.Stack):
         }))
 
         pre_prod_stage.add_manual_approval_action(action_name='PromoteToProd')
-        
+
         pipeline.add_application_stage(WebServiceStage(self,'Prod', env={
             'account': '914456827738',
             'region': 'us-east-2'

@@ -1,15 +1,18 @@
-import aws_cdk as core
+import aws_cdk.core as core
 import aws_cdk.assertions as assertions
 
 from cdkdemo.cdkdemo_stack import CdkdemoStack
 
-# example tests. To run these tests, uncomment this file along with the example
-# resource in cdkdemo/cdkdemo_stack.py
-def test_sqs_queue_created():
+def test_lambda_handler():
+    # Given
     app = core.App()
-    stack = CdkdemoStack(app, "cdkdemo")
-    template = assertions.Template.from_stack(stack)
 
-#     template.has_resource_properties("AWS::SQS::Queue", {
-#         "VisibilityTimeout": 300
-#     })
+    # When
+    CdkdemoStack(app, 'Stack')
+
+    # Then
+    template = app.synth().get_stack_by_name('Stack').template
+    functions = [resource for resource in template['Resources'].values()
+                    if resource['Type'] == 'AWS::Lambda::Function']
+    assert len(functions) == 1
+    assert functions[0]['Properties']['Handler'] == 'handler.handler'

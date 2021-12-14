@@ -12,7 +12,7 @@ class CdkPipelineStack(core.Stack):
         source_artifact = codepipeline.Artifact()
         cloud_assembly_artifact = codepipeline.Artifact()
 
-        pipelines.CdkPipeline(self, 'Pipeline',
+        pipelines.CdkPipeline(self, 'CdkDemoPipeline',
             cloud_assembly_artifact=cloud_assembly_artifact,
             pipeline_name='WebinarPipeline',
             source_action=cpactions.GitHubSourceAction(

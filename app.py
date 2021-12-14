@@ -8,7 +8,7 @@ from cdkdemo.pipeline_stack import CdkPipelineStack
 
 app = cdk.App()
 CdkdemoStack(app, "CdkdemoStack")
-CdkPipelineStack(app, "PipelineStack", env={
+CdkPipelineStack(app, "PipelineDemoStack", env={
     'account': '914456827738',
     'region': 'us-east-2'
 })

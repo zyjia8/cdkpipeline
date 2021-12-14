@@ -3,6 +3,7 @@ from aws_cdk import aws_codepipeline as codepipeline
 from aws_cdk import aws_codepipeline_actions as cpactions
 from aws_cdk import pipelines
 from constructs import Construct
+from .webservice_stage import WebServiceStage
 
 class CdkPipelineStack(core.Stack):
 
@@ -12,7 +13,7 @@ class CdkPipelineStack(core.Stack):
         source_artifact = codepipeline.Artifact()
         cloud_assembly_artifact = codepipeline.Artifact()
 
-        pipelines.CdkPipeline(self, 'CdkDemoPipeline',
+        pipeline = pipelines.CdkPipeline(self, 'CdkDemoPipeline',
             cloud_assembly_artifact=cloud_assembly_artifact,
             pipeline_name='WebinarPipeline',
             source_action=cpactions.GitHubSourceAction(
@@ -29,3 +30,7 @@ class CdkPipelineStack(core.Stack):
                 synth_command='cdk synth'
             )
         )
+        pipeline.add_application_stage(WebServiceStage(self,'Pre-Prod', env={
+            'account': '914456827738',
+            'region': 'us-east-2'
+        }))

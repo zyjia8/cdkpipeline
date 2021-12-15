@@ -32,7 +32,7 @@ class CdkPipelineStack(core.Stack):
             )
         )
         pre_prod_app = WebServiceStage(self,'Pre-Prod', env={
-            'account': '914456827738',
+            'account': '292574139048',
             'region': 'us-east-2'
         })
 
@@ -53,6 +53,6 @@ class CdkPipelineStack(core.Stack):
         pre_prod_stage.add_manual_approval_action(action_name='PromoteToProd')
 
         pipeline.add_application_stage(WebServiceStage(self,'Prod', env={
-            'account': '914456827738',
+            'account': '890395779521',
             'region': 'us-east-2'
         }))        

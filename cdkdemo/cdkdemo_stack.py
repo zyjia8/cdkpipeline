@@ -2,6 +2,8 @@ from aws_cdk import core
 from os import path
 import aws_cdk.aws_lambda as lmb
 import aws_cdk.aws_apigateway as apigw
+import aws_cdk.aws_cloudwatch as cloudwatch
+import aws_cdk.aws_codedeploy as codedeploy
 
 class CdkdemoStack(core.Stack):
 
@@ -15,8 +17,26 @@ class CdkdemoStack(core.Stack):
             handler='handler.handler',
             code=lmb.Code.from_asset(path.join(this_dir, 'lambda')))
 
+        alias = lmb.Alias(self,'HandlerAlias',alias_name='Current',version=handler.current_version)
         gw = apigw.LambdaRestApi(self, 'Gateway',
-            handler=handler.current_version)
+            handler=alias)
+
+        failure_alarm = cloudwatch.Alarm(self, 'FailureAlarm',
+            metric=cloudwatch.Metric(
+                metric_name='5XXError',
+                namespace='AWS/ApiGateway',
+                dimensions={
+                    'ApiName': 'Gateway',
+                },
+                statistic='Sum',
+                period=core.Duration.minutes(1)),
+            threshold=1,
+            evaluation_periods=1)
+
+        codedeploy.LambdaDeploymentGroup(self, 'DeploymentGroup',
+            alias=alias,
+            deployment_config=codedeploy.LambdaDeploymentConfig.CANARY_10_PERCENT_10_MINUTES,
+            alarms=[failure_alarm])
 
         self.url_output = core.CfnOutput(self, 'Url', value=gw.url)
 
